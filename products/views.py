@@ -1,35 +1,49 @@
 from django.shortcuts import render , redirect
+from products.forms import ProductForm, RegisterForm
 from products.models import Category, Product, User
 from django.contrib.auth import authenticate, login as auth_login
 # Create your views here.
 
-def home(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        description = request.POST.get('description')
-        creation_date = request.POST.get('creation_date')
-        expiry_date = request.POST.get('expiry_date')
-        category = request.POST.get('category')
-        price = request.POST.get('price')
-        country = request.POST.get('country')
-        image = request.FILES.get('image') 
+# def home(request):
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         description = request.POST.get('description')
+#         creation_date = request.POST.get('creation_date')
+#         expiry_date = request.POST.get('expiry_date')
+#         category = request.POST.get('category')
+#         price = request.POST.get('price')
+#         country = request.POST.get('country')
+#         image = request.FILES.get('image') 
 
-        Product.objects.create(
-            name=name,
-            description=description,
-            creation_date=creation_date,
-            expiry_date=expiry_date,
-            category=Category.objects.get(id=category),
-            price=price,
-            country=country,
-            image=image
-        )
-        return redirect('items')
-    username = request.session.get('username')
-    if not username:
+#         Product.objects.create(
+#             name=name,
+#             description=description,
+#             creation_date=creation_date,
+#             expiry_date=expiry_date,
+#             category=Category.objects.get(id=category),
+#             price=price,
+#             country=country,
+#             image=image
+#         )
+#         return redirect('items')
+#     username = request.session.get('username')
+#     if not username:
+#         return redirect('login')
+
+#     return render(request, 'products/home.html' , {'categories': Category.objects.all()})
+def home(request):
+    if not request.session.get('username'):
         return redirect('login')
 
-    return render(request, 'products/home.html' , {'categories': Category.objects.all()})
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('items')
+    else:
+        form = ProductForm()
+
+    return render(request, 'products/home.html', {'form': form})
 
 
 def items(request):
@@ -67,20 +81,34 @@ def update(request, id):
     
 
 
+# def register(request):
+#     if request.method == 'POST':
+#         password = request.POST.get('password')
+#         confirm_password = request.POST.get('confirm_password')
+
+#         if password == confirm_password:
+#             User.objects.create(
+#                 username=request.POST.get('username'),
+#                 email=request.POST.get('email'),
+#                 password=password
+#             )
+#             return redirect('login') 
+
+#     return render(request, 'register.html')
 def register(request):
     if request.method == 'POST':
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-
-        if password == confirm_password:
+        registerForm = RegisterForm(request.POST)
+        if registerForm.is_valid():
             User.objects.create(
                 username=request.POST.get('username'),
                 email=request.POST.get('email'),
-                password=password
+                password=request.POST.get('password')
             )
-            return redirect('login') 
-
-    return render(request, 'register.html')
+            return redirect('login')
+    else:
+        registerForm = RegisterForm()
+        
+    return render(request, 'register.html', {'registerForm': registerForm})
 
 def login(request):
     if request.method == 'POST':

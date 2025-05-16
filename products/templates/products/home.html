@@ -8,7 +8,7 @@
   <form method="post" enctype="multipart/form-data" action="{% url 'home' %}">
     {% csrf_token %}
     
-    <div class="mb-3">
+    {% comment %} <div class="mb-3">
       <label for="name" class="form-label">Name</label>
       <input type="text" class="form-control" id="name" name="name" required>
     </div>
@@ -50,7 +50,8 @@
     <div class="mb-3">
       <label for="image" class="form-label">Product Image</label>
       <input type="file" class="form-control" name="image" id="image">
-    </div>
+    </div> {% endcomment %}
+    {{form.as_p}}
 
     <button type="submit" class="btn btn-primary">Add Product</button>
   </form>
