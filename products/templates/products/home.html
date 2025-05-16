@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Add Product</h2>
+  <form method="post" enctype="multipart/form-data" action="{% url 'home' %}">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <input type="text" class="form-control" id="description" name="description">
+    </div>
+
+    <div class="mb-3">
+      <label for="creation_date" class="form-label">Creation Date</label>
+      <input type="date" class="form-control" name="creation_date" id="creation_date">
+    </div>
+
+    <div class="mb-3">
+      <label for="expiry_date" class="form-label">Expiry Date</label>
+      <input type="date" class="form-control" name="expiry_date" id="expiry_date">
+    </div>
+
+    <div class="mb-3">
+      <label for="category" class="form-label">Category</label>
+      <select name="category" id="category" class="form-select">
+        {% for value in categories %}
+        <option value="{{ value.id }}">{{ value.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="price" class="form-label">Price</label>
+      <input type="number" step="0.01" class="form-control" name="price" id="price">
+    </div>
+
+    <div class="mb-3">
+      <label for="country" class="form-label">Country</label>
+      <input type="text" class="form-control" name="country" id="country">
+    </div>
+
+    <div class="mb-3">
+      <label for="image" class="form-label">Product Image</label>
+      <input type="file" class="form-control" name="image" id="image">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Product</button>
+  </form>
+</div>
+{% endblock content %}

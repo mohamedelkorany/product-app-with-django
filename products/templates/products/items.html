@@ -1,0 +1,123 @@
+{% extends 'base.html' %} {% block title %}All Products{% endblock title %} 
+{%block content %}
+
+<div class="container mt-5">
+  <h2 class="text-center mb-5">Our Products</h2>
+  <div class="row g-4">
+    {% for product in products %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 border-0 shadow-lg rounded-4">
+        <img
+          src="{{ product.image.url }}"
+          class="card-img-top rounded-top-4"
+          alt="{{ product.name }}"
+          style="height: 250px; object-fit: contain"
+        />
+
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text text-muted">{{ product.description}}</p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <strong>Category:</strong> {{ product.category }}
+            </li>
+            <li class="list-group-item">
+              <strong>Price:</strong> ${{ product.price }}
+            </li>
+            <li class="list-group-item">
+              <strong>Country:</strong> {{ product.country }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="card-footer bg-light text-muted small text-end">
+          <small>
+            Created: {{ product.creation_date }} <br />
+            Expires: {{ product.expiry_date }}
+          </small>
+          <a href="{% url 'delete' product.id %}" class="btn btn-danger">
+            Delete
+          </a>
+          <a
+            href=""
+            class="btn btn-outline-success btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#updateModal{{ product.id }}"
+          >
+            <i class="bi bi-pencil-square"></i>Update
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="updateModal{{ product.id }}" tabindex="-1" aria-labelledby="updateModalLabel{{ product.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <form method="POST" action="{% url 'update' product.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-header">
+              <h5 class="modal-title" id="updateModalLabel{{ product.id }}">Update {{ product.name }}</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="name{{ product.id }}" class="form-label">Product Name</label>
+                <input type="text" name="name" id="name{{ product.id }}" class="form-control" value="{{ product.name }}">
+              </div>
+    
+              <div class="mb-3">
+                <label for="description{{ product.id }}" class="form-label">Description</label>
+                <input type="text" name="description" id="description{{ product.id }}" class="form-control" value="{{ product.description }}">
+              </div>
+    
+              <div class="mb-3">
+                <label for="creation_date{{ product.id }}" class="form-label">Creation Date</label>
+                <input type="date" name="creation_date" id="creation_date{{ product.id }}" class="form-control" value="{{ product.creation_date|date:'Y-m-d' }}">
+              </div>
+    
+              <div class="mb-3">
+                <label for="expiry_date{{ product.id }}" class="form-label">Expiry Date</label>
+                <input type="date" name="expiry_date" id="expiry_date{{ product.id }}" class="form-control" value="{{ product.expiry_date|date:'Y-m-d' }}">
+              </div>
+    
+              <div class="mb-3">
+                <label for="category{{ product.id }}" class="form-label">Category</label>
+                <select name="category" id="category{{ product.id }}" class="form-select">
+                  {% for cat in categories %}
+                    <option value="{{ cat.name }}" {% if cat.name == product.category.name %}selected{% endif %}>
+                      {{ cat.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+    
+              <div class="mb-3">
+                <label for="price{{ product.id }}" class="form-label">Price</label>
+                <input type="number" name="price" id="price{{ product.id }}" class="form-control" value="{{ product.price }}">
+              </div>
+    
+              <div class="mb-3">
+                <label for="country{{ product.id }}" class="form-label">Country</label>
+                <input type="text" name="country" id="country{{ product.id }}" class="form-control" value="{{ product.country }}">
+              </div>
+    
+              <div class="mb-3">
+                <label for="image{{ product.id }}" class="form-label">Product Image</label>
+                <input type="file" name="image" id="image{{ product.id }}" class="form-control">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-success">Save changes</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center">
+      <p class="text-danger fs-5">No products found.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}
